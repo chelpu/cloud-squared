@@ -39,6 +39,7 @@ def run():
 @app.route("/play", methods=['GET', 'POST'])
 def play():
 	resp = twilio.twiml.Response()
+	resp.say("Hey there")
 	resp.play(playURL)
 	return str(resp)
 
