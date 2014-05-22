@@ -7,9 +7,9 @@ import soundcloud
 app = Flask(__name__)
 
 	
-#account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
-#auth_token = "a7628c89db064134c18bec81b380722b"
-#clientTwil = TwilioRestClient(account_sid, auth_token)
+account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
+auth_token = "a7628c89db064134c18bec81b380722b"
+clientTwil = TwilioRestClient(account_sid, auth_token)
 
 playURL = ""
 
