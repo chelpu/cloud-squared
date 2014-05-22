@@ -15,7 +15,9 @@ print titleAndArtist
 print stream_url.location
 
 @app.route("/", methods=['GET', 'POST'])
-def disp():
+def run():
+	body = request.values.get('Body', None)
+	print body
 	resp = twilio.twiml.Response()
 	resp.message(titleAndArtist)
 	return str(resp)
