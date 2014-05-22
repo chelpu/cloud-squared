@@ -36,8 +36,9 @@ def run():
 	#							   url="http://cloud-squared.herokuapp.com/play")
 	return str(resp)
 
-#@app.route("/play", methods=['GET', 'POST'])
-#def play():
+@app.route("/play", methods=['GET', 'POST'])
+def play():
+	return "hello"
 #	resp = twilio.twiml.Response()
 #	resp.play(playURL)
 #	return str(resp)
