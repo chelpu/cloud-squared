@@ -45,7 +45,7 @@ def play():
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	print "purl ", playURL
-	resp.play("https://ec-media.soundcloud.com/FrbdQpJhNBjf.128.mp3?f10880d39085a94a0418a7ef69b03d522cd6dfee9399eeb9a522019c67f8be3864a14bf70977cd1706f3fa370df75106ab0634f2e7c7d4e26de5cb3208e10633a158c10ebf&AWSAccessKeyId=AKIAJNIGGLK7XA7YZSNQ&Expires=1400800426&Signature=%2F0HlgCDCu4bdg3uDAIJWbIkAqy8%3D")
+	resp.play(playURL)
 	return str(resp)
 
 if __name__=="__main__":
