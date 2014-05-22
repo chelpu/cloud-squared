@@ -16,10 +16,13 @@ playURL = ""
 @app.route("/", methods=['GET', 'POST'])
 def run():
 	body = request.values.get('Body', None)
-
 	client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
 	tracks = client.get('/tracks', q=body)
 	track = tracks[0]
+	i = 0
+	while track.sharing.startswith("pri") and i < tracks.count:
+		track = tracks[++i]
+
 	stream_url = client.get(track.stream_url, allow_redirects=False)
 
 	titleAndArtist = track.title + ' - ' + track.user["username"]
@@ -28,6 +31,7 @@ def run():
 
 	resp = twilio.twiml.Response()
 	resp.message(titleAndArtist)
+	print stream_url.location + " " + track.sharing
 	playURL = stream_url.location
 
 	# make a call to the client who texted in
@@ -39,14 +43,10 @@ def run():
 @app.route("/play", methods=['GET', 'POST'])
 def play():
 	resp = twilio.twiml.Response()
-	resp.say("Hey there")
+	resp.say("Press 1 to skip to a different song")
 	print playURL
 	resp.play(playURL)
 	return str(resp)
-
-@app.route("/sound", methods=['GET', 'POST'])
-def sound():
-	return playURL
 
 if __name__=="__main__":
 	app.run(debug=True)
