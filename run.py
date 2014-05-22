@@ -15,10 +15,10 @@ app = Flask(__name__)
 @app.route("/", methods=['GET', 'POST'])
 def disp():
 	resp = twilio.twiml.Response()
-	resp.message(stream_url.location)
+	#resp.message(stream_url.location)
+	resp.message("hey")
 	return str(resp)
 
 if __name__=="__main__":
-	port = int(os.environ.get('PORT', 5000))
-	app.run(host='0.0.0.0', port=port)
+	app.run(debug=True)
 
