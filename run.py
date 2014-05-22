@@ -12,10 +12,11 @@ stream_url = client.get(track.stream_url, allow_redirects=False)
 print stream_url.location
 
 @app.route("/", methods=['GET', 'POST'])
-def disp():
-	resp = twilio.twiml.Response()
-	resp.message(stream_url.location)
-	return str(resp)
+while 1
+	def disp():
+		resp = twilio.twiml.Response()
+		resp.message(stream_url.location)
+		return str(resp)
 
 if __name__=="__main__":
 	app.run(debug=True)
