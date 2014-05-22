@@ -44,7 +44,7 @@ def run():
 def play():
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
-	print playURL
+	print "purl ", playURL
 	resp.play(playURL)
 	return str(resp)
 
