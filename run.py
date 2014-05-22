@@ -45,7 +45,7 @@ def play():
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	print "purl ", playURL
-	resp.play(playURL)
+	resp.play("https://api.twilio.com/Cowbell.mp3")
 	return str(resp)
 
 if __name__=="__main__":
