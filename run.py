@@ -31,7 +31,7 @@ def run():
 	print stream_url.location
 
 	resp = twilio.twiml.Response()
-	resp.message(titleAndArtist)
+	resp.message(titleAndArtist + '\nStream this sound at: ' + stream_url.location)
 	print stream_url.location + " " + track.sharing
 	playURL = stream_url.location
 
