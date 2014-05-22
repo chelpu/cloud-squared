@@ -38,16 +38,15 @@ def run():
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play")
+								   url="http://cloud-squared.herokuapp.com/play/" + stream_url.location)
 	return str(resp)
 
-@app.route("/play", methods=['GET', 'POST'])
-def play():
-	print "REQ ", str(self.request.url)
+@app.route("/play/<stream>", methods=['GET', 'POST'])
+def play(stream):
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
-	print "purl ", playURL
-	resp.play(playURL)
+	print "purl ", stream
+	resp.play(stream)
 	return str(resp)
 
 if __name__=="__main__":
