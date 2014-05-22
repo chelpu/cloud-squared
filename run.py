@@ -23,6 +23,7 @@ def run():
 	while track.sharing.startswith("pri") and i < tracks.count:
 		track = tracks[++i]
 
+	print i
 	stream_url = client.get(track.stream_url, allow_redirects=False)
 
 	titleAndArtist = track.title + ' - ' + track.user["username"]
@@ -37,7 +38,7 @@ def run():
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play")
+								   url="http://cloud-squared.herokuapp.com/play?search=" + stream_url.location)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
