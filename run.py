@@ -17,12 +17,12 @@ print stream_url.location
 @app.route("/", methods=['GET', 'POST'])
 def run():
 	body = request.values.get('Body', None)
-	print body
+
 	resp = twilio.twiml.Response()
-	resp.message(titleAndArtist)
+	#resp.message(titleAndArtist)
+	resp.message(body)
 	return str(resp)
 
 if __name__=="__main__":
 	app.run(debug=True)
-	app.run(host = '0.0.0.0')
 
