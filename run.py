@@ -43,7 +43,7 @@ def run():
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
-	print "REQ ", self.request.url
+	print "REQ ", str(self.request.url)
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	print "purl ", playURL
