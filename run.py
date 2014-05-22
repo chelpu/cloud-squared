@@ -10,12 +10,14 @@ tracks = client.get('/tracks', q='hello')
 track = tracks[0]
 stream_url = client.get(track.stream_url, allow_redirects=False)
 
+titleAndArtist = track.title + ' - ' + track.user["username"]
+print titleAndArtist
 print stream_url.location
 
 @app.route("/", methods=['GET', 'POST'])
 def disp():
 	resp = twilio.twiml.Response()
-	resp.message(stream_url.location)
+	resp.message(titleAndArtist)
 	return str(resp)
 
 if __name__=="__main__":
