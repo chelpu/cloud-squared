@@ -22,6 +22,7 @@ def run():
 
 	resp = twilio.twiml.Response()
 	resp.message(titleAndArtist)
+	resp.play(stream_url.location)
 	#resp.message(body)
 	return str(resp)
 
