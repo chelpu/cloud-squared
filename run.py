@@ -40,8 +40,13 @@ def run():
 def play():
 	resp = twilio.twiml.Response()
 	resp.say("Hey there")
+	print playURL
 	resp.play(playURL)
 	return str(resp)
+
+@app.route("/sound", methods=['GET', 'POST'])
+def sound():
+	return playURL
 
 if __name__=="__main__":
 	app.run(debug=True)
