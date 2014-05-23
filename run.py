@@ -3,6 +3,7 @@ import twilio.twiml
 from twilio.rest import TwilioRestClient
 import os
 import soundcloud
+from urllib import urlencode
 
 app = Flask(__name__)
 
@@ -35,14 +36,17 @@ def run():
 	print stream_url.location + " " + track.sharing
 	playURL = stream_url.location
 
+	URLparam = urlencode(url)
+
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play")
+								   url="http://cloud-squared.herokuapp.com/play/" + URLparam)
 	return str(resp)
 
-@app.route("/play", methods=['GET', 'POST'])
-def play():
+@app.route("/play/<encoded>", methods=['GET', 'POST'])
+def play(encoded):
+	print "E: " + encoded
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.play("https://api.twilio.com/cowbell.mp3")
