@@ -9,9 +9,8 @@ app = Flask(__name__)
 
 def getTrack(query, client, i):
 	tracks = client.get('/tracks', q=query)
-	track = tracks[i]
 	while track.sharing.startswith("pri") and i < tracks.count:
-		track = tracks[++i]
+		track = tracks[i++]
 	return {"track" : track, "i" : i}
 
 	
@@ -19,8 +18,6 @@ account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
 auth_token = "a7628c89db064134c18bec81b380722b"
 clientTwil = TwilioRestClient(account_sid, auth_token)
 client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
-
-playURL = ""
 
 @app.route("/", methods=['GET', 'POST'])
 def run():
@@ -42,12 +39,12 @@ def run():
 	encoded = urllib.quote_plus(playURL)
 	encodedBody = urllib.quote_plus(body)
 
-	i = urllib.quote_plus(str(i))
+	cur = urllib.quote_plus(str(i))
 
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0&cur=" + i)
+								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0&cur=" + cur)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
@@ -76,7 +73,7 @@ def handle_key():
 
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
-		track = getTrack(query, client)
+		track = getTrack(query, client, int(cur))
 
 		# Get url to send back to play
 		stream_url = client.get(track.stream_url, allow_redirects=False)
@@ -84,7 +81,7 @@ def handle_key():
 		encodedURL = urllib.quote_plus(playURL)
 
 		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded, method="POST") as g:
-			g.play(sound)
+			g.play(playURL)
 
 		return str(resp)
 
