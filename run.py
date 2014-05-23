@@ -45,13 +45,13 @@ def run():
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0")
+								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0&cur=" + i)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
 	option = request.args.get('opt', '')
-	print "OPT: ", option
+	cur = request.args.get('cur', '')
 	sound = request.args.get('sound', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
@@ -59,7 +59,7 @@ def play():
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
-	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded, method="POST") as g:
+	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur, method="POST") as g:
 		g.play(sound)
 	return str(resp)
 
