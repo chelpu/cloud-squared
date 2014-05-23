@@ -42,6 +42,8 @@ def run():
 	encoded = urllib.quote_plus(playURL)
 	encodedBody = urllib.quote_plus(body)
 
+	i = urllib.quote_plus(str(i))
+
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
@@ -68,6 +70,7 @@ def handle_key():
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
 
+	cur = request.args.get('cur', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
 
