@@ -19,21 +19,13 @@ def getTrack(query, client):
 account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
 auth_token = "a7628c89db064134c18bec81b380722b"
 clientTwil = TwilioRestClient(account_sid, auth_token)
+client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
 
 playURL = ""
 
 @app.route("/", methods=['GET', 'POST'])
 def run():
-	client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
 	body = request.values.get('Body', None)
-	#client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
-	#tracks = client.get('/tracks', q=body)
-	#track = tracks[0]
-	#i = 0
-	#while track.sharing.startswith("pri") and i < tracks.count:
-	#	track = tracks[++i]
-
-	#print i
 	track = getTrack(body, client)
 	stream_url = client.get(track.stream_url, allow_redirects=False)
 
@@ -52,16 +44,17 @@ def run():
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded)
+								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0")
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
+	option = request.args.get('opt', '')
+	print "OPT: ", option
 	sound = request.args.get('sound', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
-	print "QUERY: ", query
-	print "SOUND: ", sound
+
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
@@ -74,10 +67,13 @@ def handle_key():
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
 
+	query = request.args.get('query', '')
+	encoded = urllib.quote_plus(query)
+
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
-		#resp.say("One pressed")
-
+		#resp.say("one pressed")
+		track = getTrack(query, client)
 		return str(resp)
 
 	if digit_pressed == "2":
