@@ -7,13 +7,12 @@ import urllib
 
 app = Flask(__name__)
 
-def getTrack(query, client):
+def getTrack(query, client, i):
 	tracks = client.get('/tracks', q=query)
-	track = tracks[0]
-	i = 0
+	track = tracks[i]
 	while track.sharing.startswith("pri") and i < tracks.count:
 		track = tracks[++i]
-	return track
+	return {"track" : track, "i" : i}
 
 	
 account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
@@ -26,7 +25,9 @@ playURL = ""
 @app.route("/", methods=['GET', 'POST'])
 def run():
 	body = request.values.get('Body', None)
-	track = getTrack(body, client)
+	d = getTrack(body, client, 0)
+	track = d["track"]
+	i = d["i"]
 	stream_url = client.get(track.stream_url, allow_redirects=False)
 
 	titleAndArtist = track.title + ' - ' + track.user["username"]
@@ -72,8 +73,16 @@ def handle_key():
 
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
-		#resp.say("one pressed")
 		track = getTrack(query, client)
+
+		# Get url to send back to play
+		stream_url = client.get(track.stream_url, allow_redirects=False)
+		playURL = stream_url.location
+		encodedURL = urllib.quote_plus(playURL)
+
+		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded, method="POST") as g:
+			g.play(sound)
+
 		return str(resp)
 
 	if digit_pressed == "2":
