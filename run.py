@@ -36,7 +36,7 @@ def run():
 	print stream_url.location + " " + track.sharing
 	playURL = stream_url.location
 
-	URLparam = url2pathname(url)
+	URLparam = urllib.quote_plus(playURL)
 
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
