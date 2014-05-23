@@ -87,6 +87,7 @@ def handle_key():
 
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
+		print "CUR IN HK: ", cur
 		d = getTrack(query, client, int(cur))
 		track = d["track"]
 		i = d["i"]
