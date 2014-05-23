@@ -60,14 +60,13 @@ def play():
 
 @app.route("/handle-key", methods=['GET', 'POST'])
 def handle_key(): 
+	resp = twilio.twiml.Response()
     # Get the digit pressed by the user
     if digit_pressed == "1":
-        resp = twilio.twiml.Response()
         resp.say("One pressed")
         return str(resp)
 
     if digit_pressed == "2":
-        resp = twilio.twiml.Response()
         resp.say("Two pressed")
         return str(resp)
  
