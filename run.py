@@ -10,7 +10,8 @@ app = Flask(__name__)
 def getTrack(query, client, i):
 	tracks = client.get('/tracks', q=query)
 	while track.sharing.startswith("pri") and i < tracks.count:
-		track = tracks[i++]
+		track = tracks[i]
+		i = i+1
 	return {"track" : track, "i" : i}
 
 	
