@@ -50,6 +50,7 @@ def play():
 	print "SOUND: ", sound
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
+	resp.say("Press 2 to receive a download link")
 	resp.play(sound)
 	return str(resp)
 
