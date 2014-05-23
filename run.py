@@ -37,17 +37,18 @@ def run():
 	playURL = stream_url.location
 
 	encoded = urllib.quote_plus(playURL)
+	encodedBody = urllib.quote_plus(body)
 
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?sound=" + encoded + "&b=" + body)
+								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
 	sound = request.args.get('sound', '')
-	query = request.args.get('b', '')
+	query = request.args.get('query', '')
 	print "QUERY: ", query
 	print "SOUND: ", sound
 	resp = twilio.twiml.Response()
