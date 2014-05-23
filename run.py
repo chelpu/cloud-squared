@@ -55,8 +55,7 @@ def play():
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
 	with resp.gather(numDigits=1, action="/handle-key", method="POST") as g:
-        g.play(sound)
-
+    	g.play(sound)
 	return str(resp)
 
 @app.route("/handle-key", methods=['GET', 'POST'])
