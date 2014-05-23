@@ -43,11 +43,8 @@ def run():
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
-	#searchword = request.args.get('search', '')
-	print "SEARCH ", searchword
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
-	print "purl ", hey
 	resp.play("https://api.twilio.com/cowbell.mp3")
 	return str(resp)
 
