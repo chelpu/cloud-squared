@@ -38,6 +38,8 @@ def run():
 
 	URLparam = urllib.quote_plus(playURL)
 
+	print URLparam
+
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
