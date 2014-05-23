@@ -63,16 +63,16 @@ def handle_key():
 	resp = twilio.twiml.Response()
     # Get the digit pressed by the user
     if digit_pressed == "1":
-        resp.say("One pressed")
-        return str(resp)
+		resp.say("One pressed")
+		return str(resp)
 
     if digit_pressed == "2":
-        resp.say("Two pressed")
-        return str(resp)
+		resp.say("Two pressed")
+		return str(resp)
  
     # If the caller pressed anything but 1, redirect them to the homepage.
     else:
-        return redirect("/play")
+		return redirect("/play")
 
 if __name__=="__main__":
 	app.run(debug=True)
