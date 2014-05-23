@@ -62,6 +62,7 @@ def play():
 def handle_key(): 
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
+	
     # Get the digit pressed by the user
     if digit_pressed == "1":
 		resp.say("One pressed")
