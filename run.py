@@ -36,16 +36,18 @@ def run():
 	print stream_url.location + " " + track.sharing
 	playURL = stream_url.location
 
+	encoded = urllib.quote_plus(playURL)
+
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play")
+								   url="http://cloud-squared.herokuapp.com/play?sound=" + encoded)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
-	FROM = request.values.get('From', None)
-	print "FROM: ", FROM
+	sound = request.args.get('sound', '')
+	print "SOUND: ", sound
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.play("https://api.twilio.com/cowbell.mp3")
