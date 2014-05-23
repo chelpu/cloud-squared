@@ -87,7 +87,9 @@ def handle_key():
 
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
-		track = getTrack(query, client, int(cur))
+		d = getTrack(query, client, int(cur))
+		track = d["track"]
+		i = d["i"]
 
 		# Get url to send back to play
 		stream_url = client.get(track.stream_url, allow_redirects=False)
