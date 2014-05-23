@@ -21,9 +21,14 @@ auth_token = "a7628c89db064134c18bec81b380722b"
 clientTwil = TwilioRestClient(account_sid, auth_token)
 client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
 
-@app.route("/", methods=['GET', 'POST'])
+@app.route("/text", methods=['GET', 'POST'])
 def run():
-	body = request.values.get('Body', None)
+	body = ""
+	option = request.args.get('opt', '')
+	if option == "4":
+		body = request.values.get('TranscriptionText', None)
+	else:
+		body = request.values.get('Body', None)
 	d = getTrack(body, client, 0)
 	track = d["track"]
 	i = d["i"]
@@ -49,6 +54,13 @@ def run():
 								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0&cur=" + cur)
 	return str(resp)
 
+@app.route("/call", methods=['GET', 'POST'])
+def call():
+	resp = twilio.twiml.Response()
+	resp.say("What would you like to search for?")
+	resp.record(maxLength="10", transcribe="true", finishOnKey="#", transcribeCallback="http://cloud-squared.herokuapp.com/text?option=4")
+	return str(resp)
+
 @app.route("/play", methods=['GET', 'POST'])
 def play():
 	option = request.args.get('opt', '')
@@ -56,7 +68,7 @@ def play():
 	sound = request.args.get('sound', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
-
+				
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
