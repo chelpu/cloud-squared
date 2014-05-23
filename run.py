@@ -48,7 +48,7 @@ def run():
 
 @app.route("/play/<encoded>", methods=['GET', 'POST'])
 def play(encoded):
-	print "E: " + encoded
+	#print "E: " + encoded
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.play("https://api.twilio.com/cowbell.mp3")
