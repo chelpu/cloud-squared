@@ -55,7 +55,10 @@ def play():
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
 	digit_pressed = request.values.get('Digits', None)
-	print "DIG: ", digit_pressed
+	if digit_pressed == "1":
+		print "ONE"
+	if digit_pressed == "2":
+		print "TWO"
 	resp.play(sound)
 	return str(resp)
 
