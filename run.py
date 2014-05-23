@@ -54,29 +54,27 @@ def play():
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
-	digit_pressed = request.values.get('Digits', None)
 	with resp.gather(numDigits=1, action="/handle-key", method="POST") as g:
         g.play(sound)
 
 	return str(resp)
 
-	@app.route("/handle-key", methods=['GET', 'POST'])
+@app.route("/handle-key", methods=['GET', 'POST'])
 def handle_key(): 
     # Get the digit pressed by the user
-    digit_pressed = request.values.get('Digits', None)
     if digit_pressed == "1":
         resp = twilio.twiml.Response()
         resp.say("One pressed")
         return str(resp)
 
-    if digit_pressed == "1":
+    if digit_pressed == "2":
         resp = twilio.twiml.Response()
-        resp.say("One pressed")
+        resp.say("Two pressed")
         return str(resp)
  
     # If the caller pressed anything but 1, redirect them to the homepage.
     else:
-        return redirect("/")
+        return redirect("/play")
 
 if __name__=="__main__":
 	app.run(debug=True)
