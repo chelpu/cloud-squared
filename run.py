@@ -41,7 +41,7 @@ def run():
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?sound=" + encoded + "&query=" + body)
+								   url="http://cloud-squared.herokuapp.com/play?sound=" + encoded)# + "&query=" + body)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
