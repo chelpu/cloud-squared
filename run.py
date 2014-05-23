@@ -3,7 +3,7 @@ import twilio.twiml
 from twilio.rest import TwilioRestClient
 import os
 import soundcloud
-from urllib import urlencode
+from urllib
 
 app = Flask(__name__)
 
@@ -36,7 +36,7 @@ def run():
 	print stream_url.location + " " + track.sharing
 	playURL = stream_url.location
 
-	URLparam = urlencode(url)
+	URLparam = url2pathname(url)
 
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
