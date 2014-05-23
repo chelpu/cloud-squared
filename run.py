@@ -41,7 +41,7 @@ def run():
 	# make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?sound=" + encoded + "query=" + body)
+								   url="http://cloud-squared.herokuapp.com/play?sound=" + encoded + "&query=" + body)
 	return str(resp)
 
 @app.route("/play", methods=['GET', 'POST'])
@@ -54,7 +54,7 @@ def play():
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a download link")
 	digit_pressed = request.values.get('Digits', None)
-	print "DIG: ", digit_pressed
+	print "DIG: ", digit_pressedd
 	resp.play(sound)
 	return str(resp)
 
