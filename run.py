@@ -12,9 +12,10 @@ def getTrack(query, client, i, nOrC):
 	track = tracks[i]
 	if nOrC == "n":
 		print "NEWWWWW"
+		i = i+1
 		while (track.sharing.startswith("pri") or not track.streamable) and i < tracks.count:
-			i = i+1
 			track = tracks[i]
+			i = i+1
 
 	print "I in GETTRACK: ", i
 	return {"track" : track, "i" : i}
