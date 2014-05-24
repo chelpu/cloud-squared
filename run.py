@@ -107,6 +107,7 @@ def handle_key():
 		return str(resp)
 
 	if digit_pressed == "2":
+		print "CUR: ", cur
 		d = getTrack(query, client, int(cur), "c")
 		track = d["track"]
 		if track.downloadable:
