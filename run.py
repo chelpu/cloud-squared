@@ -7,13 +7,16 @@ import urllib
 
 app = Flask(__name__)
 
-def getTrack(query, client, i):
+def getTrack(query, client, i, nOrC):
 	tracks = client.get('/tracks', q=query)
 	track = tracks[i]
-	while track.sharing.startswith("pri") and i < tracks.count:
-		i = i+1
-		track = tracks[i]
+	if nOrC == "n":
+		while track.sharing.startswith("pri") and track.streamable and i < tracks.count:
+			i = i+1
+			track = tracks[i]
 	return {"track" : track, "i" : i}
+
+
 
 	
 account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
@@ -29,7 +32,7 @@ def run():
 		body = request.values.get('TranscriptionText', None)
 	else:
 		body = request.values.get('Body', None)
-	d = getTrack(body, client, 0)
+	d = getTrack(body, client, 0, "n")
 	track = d["track"]
 	i = d["i"]
 	stream_url = client.get(track.stream_url, allow_redirects=False)
@@ -65,6 +68,7 @@ def call():
 def play():
 	option = request.args.get('opt', '')
 	cur = request.args.get('cur', '')
+	print "CUR IN PLAY: ", cur
 	sound = request.args.get('sound', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
@@ -88,7 +92,7 @@ def handle_key():
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
 		print "CUR IN HK: ", cur
-		d = getTrack(query, client, int(cur))
+		d = getTrack(query, client, int(cur), "n")
 		track = d["track"]
 		i = d["i"]
 
@@ -103,7 +107,12 @@ def handle_key():
 		return str(resp)
 
 	if digit_pressed == "2":
-		resp.say("Two pressed")
+		d = getTrack(query, client, int(cur), "c")
+		track = d["track"]
+		if track.downloadable:
+			resp.message(track.download_url)
+		else:
+			resp.message("Sorry, download link unavailable")
 		return str(resp)
  
 	# If the caller pressed anything but 1, redirect them to the homepage.
