@@ -14,6 +14,8 @@ def getTrack(query, client, i, nOrC):
 		while track.sharing.startswith("pri") and track.streamable and i < tracks.count:
 			i = i+1
 			track = tracks[i]
+
+	print "I in GETTRACK: ", i
 	return {"track" : track, "i" : i}
 
 
