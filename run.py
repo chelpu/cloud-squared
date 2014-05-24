@@ -110,6 +110,7 @@ def handle_key():
 		print "CUR: ", cur
 		d = getTrack(query, client, int(cur), "c")
 		track = d["track"]
+		print "DOWNLOADABLE? ",track.downloadable
 		if track.downloadable:
 			resp.message(track.download_url)
 		else:
