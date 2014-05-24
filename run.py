@@ -72,6 +72,7 @@ def play():
 	sound = request.args.get('sound', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
+	cur = urllib.quote_plus(cur)
 				
 	resp = twilio.twiml.Response()
 	resp.say("Press 1 to skip to a different song")
@@ -110,7 +111,7 @@ def handle_key():
 		print "CUR: ", cur
 		d = getTrack(query, client, int(cur), "c")
 		track = d["track"]
-		print "DOWNLOADABLE? ",track.downloadable
+		print "DOWNLOADABLE? ", track.downloadable
 		if track.downloadable:
 			resp.message(track.download_url)
 		else:
