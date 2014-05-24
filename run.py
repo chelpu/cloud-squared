@@ -76,9 +76,9 @@ def play():
 				
 	resp = twilio.twiml.Response()
 	
+	resp.say("Press 1 to skip to a different song")
+	resp.say("Press 2 to receive a download link")
 	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur, method="POST") as g:
-		resp.say("Press 1 to skip to a different song")
-		resp.say("Press 2 to receive a download link")
 		g.play(sound)
 	return str(resp)
 
