@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 def getTrack(query, client, i, nOrC):
 	print "IN GT, nOrC: ", nOrC
-	tracks = client.get('/tracks', q=query, order='playback_count')
+	tracks = client.get('/tracks', q=query)
 	track = tracks[i]
 
 	if nOrC == "n":
