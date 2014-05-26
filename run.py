@@ -12,6 +12,7 @@ secrets.read('secrets.ini')
 app = Flask(__name__)
 
 def getTrack(query, client, i, nOrC):
+	print "IN GT, nOrC: ", nOrC
 	tracks = client.get('/tracks', q=query)
 	track = tracks[i]
 	if nOrC == "n":
@@ -99,6 +100,9 @@ def handle_key():
 		d = getTrack(query, client, int(cur), "n")
 		track = d["track"]
 		i = d["i"]
+		titleAndArtist = track.title + ' - ' + track.user["username"]
+		message = clientTwil.messages.create(to=to, from_="+16162882901",
+                                     		 body=titleAndArtist)
 		cur = urllib.quote_plus(str(i))
 		# Get url to send back to play
 		stream_url = client.get(track.stream_url, allow_redirects=False)
