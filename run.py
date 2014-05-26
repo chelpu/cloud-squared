@@ -116,7 +116,7 @@ def handle_key():
 		track = d["track"]
 		print track.purchase_url
 		print "DOWNLOADABLE? ", track.downloadable
-		if track.downloadable:
+		if 1==1:
 			#resp.message(track.download_url)
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body=track.permalink_url)
