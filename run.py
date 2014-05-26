@@ -87,7 +87,8 @@ def handle_key():
 
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
-	print "TO IN HK: ",request.values.get('To', None)
+	to = request.values.get('To', None)
+
 	cur = request.args.get('cur', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
@@ -113,15 +114,16 @@ def handle_key():
 		print "CUR: ", cur
 		d = getTrack(query, client, int(cur), "c")
 		track = d["track"]
+		print track.purchase_url
 		print "DOWNLOADABLE? ", track.downloadable
 		if track.downloadable:
 			#resp.message(track.download_url)
-			message = clientTwil.messages.create(to="+16164601267", from_="+16162882901",
+			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body=track.download_url)
 			print track.download_url
 		else:
 			#resp.message("Sorry, download link unavailable")
-			message = clientTwil.messages.create(to="+16164601267", from_="+16162882901",
+			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body="Sorry, download link unavailable")
 		return str(resp)
  
