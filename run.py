@@ -13,7 +13,7 @@ app = Flask(__name__)
 
 def getTrack(query, client, i, nOrC):
 	print "IN GT, nOrC: ", nOrC
-	tracks = client.get('/tracks', q=query)
+	tracks = client.get('/tracks', q=query, order='created_at')
 	track = tracks[i]
 	if nOrC == "n":
 		print "NEWWWWW"
