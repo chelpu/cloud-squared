@@ -116,14 +116,14 @@ def handle_key():
 		track = d["track"]
 		print track.purchase_url
 		print "DOWNLOADABLE? ", track.downloadable
-		if 1==1:
+		if track.permalink_url != "":
 			#resp.message(track.download_url)
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body=track.permalink_url)
 		else:
 			#resp.message("Sorry, download link unavailable")
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
-                                     body="Sorry, download link unavailable")
+                                     body="Sorry, link unavailable")
 		return str(resp)
  
 	# If the caller pressed anything but 1, redirect them to the homepage.
