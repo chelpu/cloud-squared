@@ -87,7 +87,7 @@ def handle_key():
 
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
-	print "TO IN HK: ",request.values.get('From', None)
+	print "TO IN HK: ",request.values.get('To', None)
 	cur = request.args.get('cur', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
