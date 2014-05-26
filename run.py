@@ -115,6 +115,7 @@ def handle_key():
 		print "DOWNLOADABLE? ", track.downloadable
 		if track.downloadable:
 			resp.message(track.download_url)
+			print track.download_url
 		else:
 			resp.message("Sorry, download link unavailable")
 		return str(resp)
