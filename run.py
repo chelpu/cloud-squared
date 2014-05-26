@@ -119,7 +119,7 @@ def handle_key():
 		if track.downloadable:
 			#resp.message(track.download_url)
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
-                                     body=track.download_url)
+                                     body=track.permalink_url)
 			print track.download_url
 		else:
 			#resp.message("Sorry, download link unavailable")
