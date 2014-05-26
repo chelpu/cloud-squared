@@ -21,6 +21,7 @@ def getTrack(query, client, i, nOrC):
 		while (track.sharing.startswith("pri") or not track.streamable) and i < tracks.count:
 			track = tracks[i]
 			i = i+1
+	print "IN GT, track is: ", track.title
 	return {"track" : track, "i" : i}
 
 clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), secrets.get("twilio", "auth_token"))
