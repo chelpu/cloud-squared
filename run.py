@@ -13,8 +13,10 @@ app = Flask(__name__)
 
 def getTrack(query, client, i, nOrC):
 	print "IN GT, nOrC: ", nOrC
-	tracks = client.get('/tracks', q=query, order='created_at')
+	tracks = client.get('/tracks', q=query, order='playback_count')
 	track = tracks[i]
+	for i in range(0, 10):
+    	print "Track is ", tracks[i]
 	if nOrC == "n":
 		print "NEWWWWW"
 		i = i+1
