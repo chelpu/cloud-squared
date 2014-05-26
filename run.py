@@ -16,7 +16,7 @@ def getTrack(query, client, i, nOrC):
 	tracks = client.get('/tracks', q=query, order='playback_count')
 	track = tracks[i]
 	for t in range(0, 10):
-    	print "Track is ", tracks[t]
+		print "Track is ", tracks[t]
 	if nOrC == "n":
 		print "NEWWWWW"
 		i = i+1
