@@ -4,6 +4,10 @@ from twilio.rest import TwilioRestClient
 import os
 import soundcloud
 import urllib
+import ConfigParser
+
+secrets = ConfigParser.ConfigParser()
+secrets.read('secrets.ini')
 
 app = Flask(__name__)
 
@@ -20,11 +24,10 @@ def getTrack(query, client, i, nOrC):
 
 
 
-	
-account_sid = "AC5116d5d4df9f61ceae2f0732e1ea9f1b"
-auth_token = "a7628c89db064134c18bec81b380722b"
-clientTwil = TwilioRestClient(account_sid, auth_token)
-client = soundcloud.Client(client_id='2a48aabb635303b6544ac9482529822a')
+
+
+clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), secrets.get("twilio", "auth_token"))
+client = soundcloud.Client(client_id=secrets.get("soundcloud", "client_id"))
 
 @app.route("/text", methods=['GET', 'POST'])
 def run():
