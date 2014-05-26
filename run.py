@@ -84,9 +84,10 @@ def play():
 
 @app.route("/handle-key", methods=['GET', 'POST'])
 def handle_key(): 
+
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
-
+	print "FROM IN HK: ",request.values.get('From', None)
 	cur = request.args.get('cur', '')
 	query = request.args.get('query', '')
 	encoded = urllib.quote_plus(query)
@@ -114,10 +115,14 @@ def handle_key():
 		track = d["track"]
 		print "DOWNLOADABLE? ", track.downloadable
 		if track.downloadable:
-			resp.message(track.download_url)
+			#resp.message(track.download_url)
+			message = client.messages.create(to="+12316851234", from_="+16162882901",
+                                     body=track.download_url)
 			print track.download_url
 		else:
-			resp.message("Sorry, download link unavailable")
+			#resp.message("Sorry, download link unavailable")
+			message = client.messages.create(to="+12316851234", from_="+16162882901",
+                                     body="Sorry, download link unavailable")
 		return str(resp)
  
 	# If the caller pressed anything but 1, redirect them to the homepage.
