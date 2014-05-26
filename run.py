@@ -22,15 +22,12 @@ def getTrack(query, client, i, nOrC):
 			i = i+1
 	return {"track" : track, "i" : i}
 
-
-
-
-
 clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), secrets.get("twilio", "auth_token"))
 client = soundcloud.Client(client_id=secrets.get("soundcloud", "client_id"))
 
 @app.route("/text", methods=['GET', 'POST'])
 def run():
+	print "IN TEXT"
 	body = ""
 	option = request.args.get('opt', '')
 	if option == "4":
