@@ -127,6 +127,10 @@ def handle_key():
 		else:
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body="Sorry, link unavailable")
+		stream_url = client.get(track.stream_url, allow_redirects=False)
+		playURL = stream_url.location
+		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur, method="POST") as g:
+			g.play(playURL)
 		return str(resp)
  
 	# If the caller pressed anything but 1, redirect them to the homepage.
