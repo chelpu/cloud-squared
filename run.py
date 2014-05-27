@@ -79,7 +79,7 @@ def play():
 	
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a link to this song")
-	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl, method="POST") as g:
+	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + sound, method="POST") as g:
 		g.play(sound)
 	return str(resp)
 
@@ -93,6 +93,8 @@ def handle_key():
 	cur = request.args.get('cur', '')
 	query = request.args.get('query', '')
 	songURL = request.args.get('url', '')
+	sound = request.args.get('sound', '')
+	
 	encoded = urllib.quote_plus(query)
 
 	# Get the digit pressed by the user
@@ -127,10 +129,9 @@ def handle_key():
 		else:
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body="Sorry, link unavailable")
-		stream_url = client.get(track.stream_url, allow_redirects=False)
-		playURL = stream_url.location
+
 		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur, method="POST") as g:
-			g.play(playURL)
+			g.play(sound)
 		return str(resp)
  
 	# If the caller pressed anything but 1, redirect them to the homepage.
