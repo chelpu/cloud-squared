@@ -12,7 +12,6 @@ secrets.read('secrets.ini')
 app = Flask(__name__)
 
 def getTrack(query, client, i, nOrC):
-	print "IN GT, nOrC: ", nOrC
 	tracks = client.get('/tracks', q=query)
 	track = tracks[i]
 
@@ -21,7 +20,6 @@ def getTrack(query, client, i, nOrC):
 		while (track.sharing.startswith("pri") or not track.streamable) and i < tracks.count:
 			track = tracks[i]
 			i = i+1
-	print "IN GT, track is: ", track.title
 	return {"track" : track, "i" : i}
 
 clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), secrets.get("twilio", "auth_token"))
@@ -29,12 +27,7 @@ client = soundcloud.Client(client_id=secrets.get("soundcloud", "client_id"))
 
 @app.route("/text", methods=['GET', 'POST'])
 def run():
-	body = ""
-	option = request.args.get('opt', '')
-	if option == "4":
-		body = request.values.get('TranscriptionText', None)
-	else:
-		body = request.values.get('Body', None)
+	body = request.values.get('Body', None)
 	d = getTrack(body, client, 0, "n")
 	track = d["track"]
 	i = d["i"]
@@ -46,7 +39,7 @@ def run():
 	resp.message(titleAndArtist)
 	playURL = stream_url.location
 
-	encoded = urllib.quote_plus(playURL)
+	encodedPlayURL = urllib.quote_plus(playURL)
 	encodedBody = urllib.quote_plus(body)
 	encodedSongUrl = urllib.quote_plus(songURL)
 	cur = urllib.quote_plus(str(i))
@@ -54,7 +47,7 @@ def run():
 	# Make a call to the client who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encoded + "&opt=0&cur=" + cur + "&url=" + encodedSongUrl)
+								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encodedPlayURL + "&cur=" + cur + "&url=" + encodedSongUrl)
 	return str(resp)
 
 @app.route("/call", methods=['GET', 'POST'])
@@ -65,13 +58,12 @@ def call():
 
 @app.route("/play", methods=['GET', 'POST'])
 def play():
-	option = request.args.get('opt', '')
 	cur = request.args.get('cur', '')
 	sound = request.args.get('sound', '')
 	query = request.args.get('query', '')
 	songURL = request.args.get('url', '')
 
-	encoded = urllib.quote_plus(query)
+	encodedQuery = urllib.quote_plus(query)
 	encodedSongUrl = urllib.quote_plus(songURL)
 	cur = urllib.quote_plus(cur)
 	encodedSound = urllib.quote_plus(sound)
@@ -80,7 +72,7 @@ def play():
 	
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a link to this song")
-	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + encodedSound, method="POST") as g:
+	with resp.gather(numDigits=1, action="/handle-key?query=" + encodedQuery + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + encodedSound, method="POST") as g:
 		g.play(sound)
 	return str(resp)
 
@@ -98,6 +90,7 @@ def handle_key():
 	
 	encodedSongUrl = urllib.quote_plus(songURL)
 	encoded = urllib.quote_plus(query)
+	encodedSound = urllib.quote_plus(sound)
 
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
@@ -110,12 +103,13 @@ def handle_key():
 		cur = urllib.quote_plus(str(i))
 
 		songURL = track.permalink_url
-		encodedSongUrl = urllib.quote_plus(songURL)
+		encodedSongUrl = urllib.quote_plus(/)
 
 		# Get url to send back to play
 		stream_url = client.get(track.stream_url, allow_redirects=False)
 		playURL = stream_url.location
 		encodedURL = urllib.quote_plus(playURL)
+		cur = urllib.quote_plus(cur)
 
 		songURL = stream_url
 
@@ -125,7 +119,6 @@ def handle_key():
 		return str(resp)
 
 	if digit_pressed == "2":
-		print "CUR: ", cur
 		d = getTrack(query, client, int(cur), "c")
 		track = d["track"]
 		if track.permalink_url != "":
@@ -135,13 +128,15 @@ def handle_key():
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body="Sorry, link unavailable")
 
+		cur = urllib.quote_plus(cur)
 		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + sound, method="POST") as g:
 			g.play(sound)
 		return str(resp)
  
 	# If the caller pressed anything but 1, redirect them to the homepage.
 	else:
-		return redirect("/play")
+		cur = urllib.quote_plus(cur)
+		return redirect("/play?query=" + encoded + "&sound=" + encodedSound + "&cur=" + cur + "&url=" + encodedSongUrl)
 
 if __name__ == "__main__":
 	app.run(debug=True)
