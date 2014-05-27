@@ -103,7 +103,7 @@ def handle_key():
 		cur = urllib.quote_plus(str(i))
 
 		songURL = track.permalink_url
-		encodedSongUrl = urllib.quote_plus(/)
+		encodedSongUrl = urllib.quote_plus(songURL)
 
 		# Get url to send back to play
 		stream_url = client.get(track.stream_url, allow_redirects=False)
