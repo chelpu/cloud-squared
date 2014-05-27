@@ -109,10 +109,15 @@ def handle_key():
                                      		 body=titleAndArtist)
 		cur = urllib.quote_plus(str(i))
 
+		songURL = track.permalink_url
+		encodedSongUrl = urllib.quote_plus(songURL)
+
 		# Get url to send back to play
 		stream_url = client.get(track.stream_url, allow_redirects=False)
 		playURL = stream_url.location
 		encodedURL = urllib.quote_plus(playURL)
+
+		songURL = stream_url
 
 		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + encodedURL, method="POST") as g:
 			g.play(playURL)
