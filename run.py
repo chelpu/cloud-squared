@@ -74,12 +74,13 @@ def play():
 	encoded = urllib.quote_plus(query)
 	encodedSongUrl = urllib.quote_plus(songURL)
 	cur = urllib.quote_plus(cur)
+	encodedSound = urllib.quote_plus(sound)
 				
 	resp = twilio.twiml.Response()
 	
 	resp.say("Press 1 to skip to a different song")
 	resp.say("Press 2 to receive a link to this song")
-	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + sound, method="POST") as g:
+	with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + encodedSound, method="POST") as g:
 		g.play(sound)
 	return str(resp)
 
@@ -95,6 +96,7 @@ def handle_key():
 	songURL = request.args.get('url', '')
 	sound = request.args.get('sound', '')
 	
+	encodedSongUrl = urllib.quote_plus(songURL)
 	encoded = urllib.quote_plus(query)
 
 	# Get the digit pressed by the user
@@ -112,7 +114,7 @@ def handle_key():
 		playURL = stream_url.location
 		encodedURL = urllib.quote_plus(playURL)
 
-		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur, method="POST") as g:
+		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + encodedURL, method="POST") as g:
 			g.play(playURL)
 
 		return str(resp)
@@ -121,8 +123,6 @@ def handle_key():
 		print "CUR: ", cur
 		d = getTrack(query, client, int(cur), "c")
 		track = d["track"]
-		print track.purchase_url
-		print "DOWNLOADABLE? ", track.downloadable
 		if track.permalink_url != "":
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body=songURL)
@@ -130,7 +130,7 @@ def handle_key():
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body="Sorry, link unavailable")
 
-		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur, method="POST") as g:
+		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + sound, method="POST") as g:
 			g.play(sound)
 		return str(resp)
  
