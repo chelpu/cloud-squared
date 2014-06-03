@@ -22,7 +22,8 @@ def getTrack(query, client, i, nOrC):
 			i = i+1
 	return (track, i)
 
-clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), secrets.get("twilio", "auth_token"))
+clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), 
+							  secrets.get("twilio", "auth_token"))
 client = soundcloud.Client(client_id=secrets.get("soundcloud", "client_id"))
 baseURL = "http://cloud-squared.herokuapp.com"
 
@@ -117,15 +118,15 @@ def handle_key():
 
 		return str(resp)
 
-	if digit_pressed == "2":
+	elif digit_pressed == "2":
 		(track, i) = getTrack(query, client, int(cur), "c")
 		
 		if track.permalink_url != "":
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
-                                     body=songURL)
+                                     			 body=songURL)
 		else:
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
-                                     body="Sorry, link unavailable")
+                                     			 body="Sorry, link unavailable")
 
 		cur = urllib.quote_plus(cur)
 		with resp.gather(numDigits=1, action="/handle-key?query=" + encoded + "&cur=" + cur + "&url=" + encodedSongUrl + "&sound=" + sound, method="POST") as g:
