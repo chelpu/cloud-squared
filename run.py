@@ -20,17 +20,17 @@ def getTrack(query, client, i, nOrC):
 		while (track.sharing.startswith("pri") or not track.streamable) and i < tracks.count:
 			track = tracks[i]
 			i = i+1
-	return {"track" : track, "i" : i}
+	return (track, i)
 
 clientTwil = TwilioRestClient(secrets.get("twilio", "account_sid"), secrets.get("twilio", "auth_token"))
 client = soundcloud.Client(client_id=secrets.get("soundcloud", "client_id"))
+baseURL = "http://cloud-squared.herokuapp.com"
 
 @app.route("/text", methods=['GET', 'POST'])
 def run():
 	body = request.values.get('Body', None)
-	d = getTrack(body, client, 0, "n")
-	track = d["track"]
-	i = d["i"]
+	(track, i) = getTrack(body, client, 0, "n")
+	
 	stream_url = client.get(track.stream_url, allow_redirects=False)
 
 	titleAndArtist = track.title + ' - ' + track.user["username"]
@@ -44,10 +44,10 @@ def run():
 	encodedSongUrl = urllib.quote_plus(songURL)
 	cur = urllib.quote_plus(str(i))
 
-	# Make a call to the client who texted in
+	# Make a call to the user who texted in
 	call = clientTwil.calls.create(to=request.values.get('From', None),
 								   from_="+16162882901",
-								   url="http://cloud-squared.herokuapp.com/play?query=" + encodedBody + "&sound=" + encodedPlayURL + "&cur=" + cur + "&url=" + encodedSongUrl)
+								   url=baseURL + "/play?query=" + encodedBody + "&sound=" + encodedPlayURL + "&cur=" + cur + "&url=" + encodedSongUrl)
 	return str(resp)
 
 @app.route("/call", methods=['GET', 'POST'])
@@ -94,9 +94,8 @@ def handle_key():
 
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
-		d = getTrack(query, client, int(cur), "n")
-		track = d["track"]
-		i = d["i"]
+		(track, i) = getTrack(query, client, int(cur), "n")
+		
 		titleAndArtist = track.title + ' - ' + track.user["username"]
 		message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      		 body=titleAndArtist)
@@ -119,8 +118,8 @@ def handle_key():
 		return str(resp)
 
 	if digit_pressed == "2":
-		d = getTrack(query, client, int(cur), "c")
-		track = d["track"]
+		(track, i) = getTrack(query, client, int(cur), "c")
+		
 		if track.permalink_url != "":
 			message = clientTwil.messages.create(to=to, from_="+16162882901",
                                      body=songURL)
