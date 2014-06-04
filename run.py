@@ -20,6 +20,8 @@ def get_track(query, client_sc, i, nOrC):
 		while (track.sharing.startswith("pri") or not track.streamable) and i < tracks.count:
 			track = tracks[i]
 			i = i+1
+		if i == tracks.count:
+			i = -1
 	return (track, i)
 
 client_twil = TwilioRestClient(secrets.get("twilio", "account_sid"), 
@@ -31,6 +33,9 @@ baseURL = "http://cloud-squared.herokuapp.com"
 def run():
 	body = request.values.get('Body', None)
 	(track, i) = get_track(body, client_sc, 0, "n")
+	if i == -1:
+		resp.message("No songs found")
+		return str(resp)
 	
 	stream_url = client_sc.get(track.stream_url, allow_redirects=False)
 
@@ -96,6 +101,10 @@ def handle_key():
 	# Get the digit pressed by the user
 	if digit_pressed == "1":
 		(track, i) = get_track(query, client_sc, int(cur), "n")
+
+		if i == -1:
+			resp.message("No songs found")
+			return str(resp)
 		
 		title_and_artist = track.title + ' - ' + track.user["username"]
 		message = client_twil.messages.create(to=to, from_="+16162882901",
