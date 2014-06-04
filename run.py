@@ -79,12 +79,12 @@ def play():
 	
 	resp.say('Press 1 to skip to a different song')
 	resp.say('Press 2 to receive a link to this song')
-	with resp.gather(numDigits=1, action='/handle-key?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_sound, method='POST') as g:
+	with resp.gather(numDigits=1, action='/key-press?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_sound, method='POST') as g:
 		g.play(sound)
 	return str(resp)
 
-@app.route('/handle-key', methods=['GET', 'POST'])
-def handle_key(): 
+@app.route('/key-press', methods=['GET', 'POST'])
+def key_press(): 
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
 	to = request.values.get('To', None)
@@ -121,7 +121,7 @@ def handle_key():
 		encoded_url = urllib.quote_plus(play_url)
 		cur = urllib.quote_plus(cur)
 
-		with resp.gather(numDigits=1, action='/handle-key?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_url, method='POST') as g:
+		with resp.gather(numDigits=1, action='/key-press?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_url, method='POST') as g:
 			g.play(play_url)
 
 		return str(resp)
@@ -137,7 +137,7 @@ def handle_key():
                                      			 body='Sorry, link unavailable')
 
 		cur = urllib.quote_plus(cur)
-		with resp.gather(numDigits=1, action='/handle-key?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + sound, method='POST') as g:
+		with resp.gather(numDigits=1, action='/key-press?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + sound, method='POST') as g:
 			g.play(sound)
 		return str(resp)
  
