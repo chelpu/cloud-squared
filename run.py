@@ -20,6 +20,8 @@ def get_track(query, client_sc, i, nOrC):
 		while (track.sharing.startswith('pri') or not track.streamable) and i < tracks.count:
 			track = tracks[i]
 			i = i+1
+		if i == tracks.count:
+			i = -1
 	return (track, i)
 
 client_twil = TwilioRestClient(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
@@ -29,7 +31,10 @@ baseURL = 'http://cloud-squared.herokuapp.com'
 @app.route('/text', methods=['GET', 'POST'])
 def run():
 	body = request.values.get('Body', None)
-	(track, i) = get_track(body, client_sc, 0, 'n')
+	(track, i) = get_track(body, client_sc, 0, "n")
+	if i == -1:
+		resp.message("No songs found")
+		return str(resp)
 	
 	stream_url = client_sc.get(track.stream_url, allow_redirects=False)
 
@@ -73,12 +78,12 @@ def play():
 	
 	resp.say('Press 1 to skip to a different song')
 	resp.say('Press 2 to receive a link to this song')
-	with resp.gather(numDigits=1, action='/handle-key?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_sound, method='POST') as g:
+	with resp.gather(numDigits=1, action='/key-press?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_sound, method='POST') as g:
 		g.play(sound)
 	return str(resp)
 
-@app.route('/handle-key', methods=['GET', 'POST'])
-def handle_key(): 
+@app.route('/key-press', methods=['GET', 'POST'])
+def key_press(): 
 	resp = twilio.twiml.Response()
 	digit_pressed = request.values.get('Digits', None)
 	to = request.values.get('To', None)
@@ -93,8 +98,12 @@ def handle_key():
 	encoded_sound = urllib.quote_plus(sound)
 
 	# Get the digit pressed by the user
-	if digit_pressed == '1':
-		(track, i) = get_track(query, client_sc, int(cur), 'n')
+	if digit_pressed == "1":
+		(track, i) = get_track(query, client_sc, int(cur), "n")
+
+		if i == -1:
+			resp.message("No songs found")
+			return str(resp)
 		
 		title_and_artist = track.title + ' - ' + track.user['username']
 		message = client_twil.messages.create(to=to, from_='+16162882901',
@@ -111,7 +120,7 @@ def handle_key():
 		encoded_url = urllib.quote_plus(play_url)
 		cur = urllib.quote_plus(cur)
 
-		with resp.gather(numDigits=1, action='/handle-key?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_url, method='POST') as g:
+		with resp.gather(numDigits=1, action='/key-press?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + encoded_url, method='POST') as g:
 			g.play(play_url)
 
 		return str(resp)
@@ -127,7 +136,7 @@ def handle_key():
                                      			 body='Sorry, link unavailable')
 
 		cur = urllib.quote_plus(cur)
-		with resp.gather(numDigits=1, action='/handle-key?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + sound, method='POST') as g:
+		with resp.gather(numDigits=1, action='/key-press?query=' + encoded_query + '&cur=' + cur + '&url=' + encoded_song_url + '&sound=' + sound, method='POST') as g:
 			g.play(sound)
 		return str(resp)
  
