@@ -22,9 +22,8 @@ def get_track(query, client_sc, i, nOrC):
 			i = i+1
 	return (track, i)
 
-client_twil = TwilioRestClient(secrets.get('twilio', 'account_sid'), 
-							   secrets.get('twilio', 'auth_token'))
-client_sc = soundcloud.Client(client_id=secrets.get('soundcloud', 'client_id'))
+client_twil = TwilioRestClient(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
+client_sc = soundcloud.Client(client_id=os.environ['SOUNDCLOUD_CLIENT_ID'])
 baseURL = 'http://cloud-squared.herokuapp.com'
 
 @app.route('/text', methods=['GET', 'POST'])
