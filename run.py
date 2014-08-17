@@ -6,10 +6,12 @@ import soundcloud
 import urllib
 import ConfigParser
 
-secrets = ConfigParser.ConfigParser()
-secrets.read('secrets.ini')
-
 app = Flask(__name__)
+
+client_twil = TwilioRestClient(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
+client_sc = soundcloud.Client(client_id=os.environ['SOUNDCLOUD_CLIENT_ID'])
+base_url = 'http://cloud-squared.herokuapp.com'
+twilio_number = '+16162882901'
 
 def get_track(query, client_sc, i, nOrC):
 	tracks = client_sc.get('/tracks', q=query)
@@ -17,23 +19,19 @@ def get_track(query, client_sc, i, nOrC):
 
 	if nOrC == 'n':
 		i = i+1
-		while (track.sharing.startswith('pri') or not track.streamable) and i < tracks.count:
+		while (track.sharing == 'private' or not track.streamable) and i < tracks.count:
 			track = tracks[i]
 			i = i+1
 		if i == tracks.count:
 			i = -1
 	return (track, i)
 
-client_twil = TwilioRestClient(os.environ['TWILIO_ACCOUNT_SID'], os.environ['TWILIO_AUTH_TOKEN'])
-client_sc = soundcloud.Client(client_id=os.environ['SOUNDCLOUD_CLIENT_ID'])
-baseURL = 'http://cloud-squared.herokuapp.com'
-
 @app.route('/text', methods=['GET', 'POST'])
 def run():
 	body = request.values.get('Body', None)
-	(track, i) = get_track(body, client_sc, 0, "n")
+	(track, i) = get_track(body, client_sc, 0, 'n')
 	if i == -1:
-		resp.message("No songs found")
+		resp.message('No songs found')
 		return str(resp)
 	
 	stream_url = client_sc.get(track.stream_url, allow_redirects=False)
@@ -52,8 +50,8 @@ def run():
 
 	# Make a call to the user who texted in
 	call = client_twil.calls.create(to=request.values.get('From', None),
-									from_='+16162882901',
-									url=baseURL + '/play?query=' + encoded_query + '&sound=' + encoded_play_url + '&cur=' + cur + '&url=' + encoded_song_url)
+									from_=twilio_number,
+									url=base_url + '/play?query=' + encoded_query + '&sound=' + encoded_play_url + '&cur=' + cur + '&url=' + encoded_song_url)
 	return str(resp)
 
 @app.route('/call', methods=['GET', 'POST'])
@@ -98,15 +96,15 @@ def key_press():
 	encoded_sound = urllib.quote_plus(sound)
 
 	# Get the digit pressed by the user
-	if digit_pressed == "1":
-		(track, i) = get_track(query, client_sc, int(cur), "n")
+	if digit_pressed == '1':
+		(track, i) = get_track(query, client_sc, int(cur), 'n')
 
 		if i == -1:
-			resp.message("No songs found")
+			resp.message('No songs found')
 			return str(resp)
 		
 		title_and_artist = track.title + ' - ' + track.user['username']
-		message = client_twil.messages.create(to=to, from_='+16162882901',
+		message = client_twil.messages.create(to=to, from_=twilio_number,
                                      		 body=title_and_artist)
 		cur = urllib.quote_plus(str(i))
 
@@ -129,10 +127,10 @@ def key_press():
 		(track, i) = get_track(query, client_sc, int(cur), 'c')
 		
 		if track.permalink_url != '':
-			message = client_twil.messages.create(to=to, from_='+16162882901',
+			message = client_twil.messages.create(to=to, from_=twilio_number,
                                      			 body=song_url)
 		else:
-			message = client_twil.messages.create(to=to, from_='+16162882901',
+			message = client_twil.messages.create(to=to, from_=twilio_number,
                                      			 body='Sorry, link unavailable')
 
 		cur = urllib.quote_plus(cur)
